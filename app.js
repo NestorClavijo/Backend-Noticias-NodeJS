@@ -3,6 +3,8 @@ import express from 'express'
 import 'dotenv/config'
 import dbClient from './config/dbClient.js'
 import usuariosRoutes from './routes/usuarios.js'
+import comunidadRoutes from './routes/comunidad.js'
+import noticiasRoutes from './routes/noticia.js'
 
 async function main() {
   try {
@@ -23,6 +25,8 @@ async function main() {
 
   // 4 Rutas
   app.use('/usuarios', usuariosRoutes)
+  app.use('/comunidades', comunidadRoutes)
+  app.use('/noticias', noticiasRoutes)
 
   // 5 Arranca el servidor
   const PORT = process.env.PORT || 3000

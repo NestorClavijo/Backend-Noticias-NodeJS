@@ -1,10 +1,11 @@
-import usuariosModel from '../models/usuarios.js'
+import UsuariosModel from '../models/usuarios.js'
 import 'dotenv/config'
 import Usuario from '../schemas/usuarios.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
 
 class UsuarioController {
+    // Funciones para el login y el registro que seran publicas 
     // Registro de usuario
     async register(req, res) {
       try {
@@ -26,7 +27,7 @@ class UsuarioController {
         const claveHash = await bcrypt.hash(clave, salt);
   
         // 3) Crear el documento
-        const nuevo = await usuariosModel.create({
+        const nuevo = await UsuariosModel.create({
           nombre,
           username,
           email,
@@ -80,6 +81,59 @@ class UsuarioController {
       } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error en el login." });
+      }
+    }
+
+    // Funciones normales del crud
+    // Actualizar un usuario por _id
+    async updateUser(req, res) {
+      const { id } = req.params;
+      const cambios = { ...req.body };
+
+      if (cambios.clave) {
+        const salt = await bcrypt.genSalt(10);
+        cambios.clave = await bcrypt.hash(cambios.clave, salt);
+      }
+
+      try {
+        const usuarioActualizado = await UsuariosModel.update(id, cambios);
+        if (!usuarioActualizado) {
+          return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+        res.json(usuarioActualizado);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al actualizar el usuario.' });
+      }
+    }
+
+    // Obtener un usuario por _id
+    async getUser(req, res) {
+      const { id } = req.params;
+      try {
+        const usuario = await UsuariosModel.get(id);
+        if (!usuario) {
+          return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+        res.json(usuario);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener el usuario.' });
+      }
+    }
+
+    // Eliminar un usuario por _id
+    async deleteUser(req, res) {
+      const { id } = req.params;
+      try {
+        const usuarioEliminado = await UsuariosModel.delete(id);
+        if (!usuarioEliminado) {
+          return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+        res.json({ message: 'Usuario eliminado correctamente.' });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al eliminar el usuario.' });
       }
     }
   }
