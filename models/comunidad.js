@@ -49,6 +49,15 @@ class ComunidadesModel {
       .findById(id)
       .populate('noticias');   // rellena el array "noticias" con los documentos completos
   }
+
+  async listByUser(userId) {
+    return await ComunidadSchema.find({
+      $or: [
+        { propietario: userId },
+        { usuarios: userId }
+      ]
+    });
+  }
 }
 
 export default new ComunidadesModel();

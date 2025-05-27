@@ -1,4 +1,5 @@
 import UsuariosModel from '../models/usuarios.js'
+import ComunidadesModel from '../models/comunidad.js'
 import 'dotenv/config'
 import Usuario from '../schemas/usuarios.js';
 import bcrypt from 'bcryptjs';
@@ -134,6 +135,19 @@ class UsuarioController {
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Error al eliminar el usuario.' });
+      }
+    }
+
+    async listCommunities(req, res) {
+      const { id } = req.params;
+      try {
+        const comunidades = await ComunidadesModel.listByUser(id);
+        return res.json(comunidades);
+      } catch (err) {
+        console.error(err);
+        return res
+          .status(500)
+          .json({ error: 'Error al listar las comunidades del usuario.' });
       }
     }
   }

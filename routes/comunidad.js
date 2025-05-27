@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import comunidadController from '../controllers/comunidadController.js';
 import { verifyToken, authorizeRoles, authorizeOwnerOrRoles } from '../helpers/auth.js';
+import UsuarioController from '../controllers/usuarioController.js'
 
 const route = Router();
 
@@ -56,5 +57,10 @@ route.get(
     authorizeOwnerOrRoles('regular', 'admin'),
     comunidadController.getCommunityNews
 );
+
+route.get('/:id/comunidades',
+          verifyToken,
+          authorizeOwnerOrRoles('regular', 'admin'),
+          UsuarioController.listCommunities);
 
 export default route;
